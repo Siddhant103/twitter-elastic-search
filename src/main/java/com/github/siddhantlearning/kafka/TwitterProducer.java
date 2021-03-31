@@ -28,6 +28,8 @@ public class TwitterProducer {
     String consumerSecret = "Kjluduevpr2m1vI26Gsiu8o82NXlRfBgqm0UehH7l3s8RGovbj";
     String token = "493200994-uyQutznr9LdhtQKgzbOf7YSwpXRDX9L6ZnvqwxEy";
     String secret = "06KzywQngpOJJkZOL01OWNLFFpE9EChyRMKotIvjD9eKW";
+    // Optional: set up some followings and track terms
+    List<String> terms = Lists.newArrayList("bitcoin", "modi");
 
     public TwitterProducer(){}
 
@@ -90,8 +92,7 @@ public class TwitterProducer {
         /** Declare the host you want to connect to, the endpoint, and authentication (basic auth or oauth) */
         Hosts hosebirdHosts = new HttpHosts(Constants.STREAM_HOST);
         StatusesFilterEndpoint hosebirdEndpoint = new StatusesFilterEndpoint();
-// Optional: set up some followings and track terms
-        List<String> terms = Lists.newArrayList("bitcoin");
+
         hosebirdEndpoint.trackTerms(terms);
 
 // These secrets should be read from a config file
@@ -124,6 +125,11 @@ public class TwitterProducer {
         properties.setProperty(ProducerConfig.ACKS_CONFIG, "all");//to prevent loss of msg
         properties.setProperty(ProducerConfig.RETRIES_CONFIG, Integer.toString(Integer.MAX_VALUE));//setting retry value
         properties.setProperty(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "5"); // kafka 2.0 >= 1.1 so we can keep this as 5. Use 1 otherwise.
+
+        // high throughput producer (at the expense of a bit of latency and CPU usage)
+        properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+        properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, "20");
+        properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, Integer.toString(32*1024)); // 32 KB batch size
 
         KafkaProducer<String, String> producer = new KafkaProducer<String, String>(properties);
 
