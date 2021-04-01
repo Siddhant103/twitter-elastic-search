@@ -34,7 +34,9 @@ import java.util.Properties;
 public class ElasticSearchConsumer {
 
     public static RestHighLevelClient createClient(){
-
+        /**
+         * Using Bonsai.io for setting up elasticsearch. This is different from setting up elasticsearch on local machine.
+         */
         //////////////////////////
         /////////// IF YOU USE LOCAL ELASTICSEARCH
         //////////////////////////
